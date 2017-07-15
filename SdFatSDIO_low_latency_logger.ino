@@ -139,10 +139,15 @@ public:
             last_error = E_create_contiguous;
             return false;
         }
-        if(!sd_fat.card()->erase(first_sector, last_sector)) {
-            log("PreallocatedFile: erase() failed");
-            last_error = E_erase;
-            return false;
+        uint32_t first_erase_sector = first_sector;
+        const size_t erase_count = 64 * 1024; // number of sectors to erase at once
+        while(first_erase_sector <= last_sector) {
+            if(!sd_fat.card()->erase(first_erase_sector, std::min(first_erase_sector+erase_count, last_sector))) {
+                log("PreallocatedFile: erase() failed");
+                last_error = E_erase;
+                return false;
+            }
+            first_erase_sector += erase_count;
         }
         log("First sector: %u     last sector: %u\n", first_sector, last_sector);
         this->first_sector = first_sector;
