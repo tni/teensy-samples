@@ -112,6 +112,8 @@ void setup() {
     // ((PDBmod + 1) / n) -1 which subdivides the PDB cycle by n, are used.
     // The missing reset on overflow allows even "uneven" divisions...
     PDB0_DACINT0 = 0x1554;             // trigger DAC 12.00293 times per PDB cycle, just as an example
+    // PDB0_DACINT0 = mod;             // use this instead to trigger DAC once per PDB cycle
+    
     PDB0_DACINTC0 = PDB_DACINTC_TOE;   // enable DAC interval trigger
 
     PDB0_SC |= PDB_SC_LDOK;            // sync buffered PDB registers
@@ -130,11 +132,12 @@ void setup() {
         if(/*src_idx_prev == src_idx_curr &&*/ dac_out_idx_prev == dac_out_idx_curr) continue;
         src_idx_prev = src_idx_curr;
         dac_out_idx_prev = dac_out_idx_curr;
-        if (!TRACE_VIEW)
-          Serial.printf("DMA src idx: %4u   DMA dest idx: %4u   DAC out idx: %4u   DAC value: %4u\n",
-                      src_idx_curr, dest_idx, dac_out_idx_curr, dac_val);
-        else
-          Serial.println(dac_val); // This allows to see the waveform in the tracer
+        if (!TRACE_VIEW) {
+            Serial.printf("DMA src idx: %4u   DMA dest idx: %4u   DAC out idx: %4u   DAC value: %4u\n",
+                          src_idx_curr, dest_idx, dac_out_idx_curr, dac_val);
+        } else {
+            Serial.println(dac_val); // This allows to see the waveform in the tracer
+        }
     }
 }
 
