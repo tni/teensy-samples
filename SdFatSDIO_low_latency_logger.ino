@@ -210,7 +210,7 @@ public:
                 log("Error writing log file. Current sector: %u\n", next_sector);
             }
         }
-        if(next_sector) file.truncate((next_sector - first_sector - 1) * 512 + partial_sector_len);
+        if(next_sector) file.truncate((next_sector - first_sector) * 512 + partial_sector_len);
         file.close();
         partial_sector_len = 0;
         first_sector = 0;
